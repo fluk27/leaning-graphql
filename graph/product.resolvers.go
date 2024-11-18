@@ -8,11 +8,27 @@ import (
 	"context"
 	"fmt"
 	"leaning-graphql/graph/model"
+	"leaning-graphql/models"
 	"log/slog"
 )
 
 // CreateProduct is the resolver for the createProduct field.
 func (r *mutationResolver) CreateProduct(ctx context.Context, input model.ProductRequest) (*model.ProductResponse, error) {
+	resultProduct, err := r.ProductSvc.CreateProductService(models.Product{
+		Name:        input.Name,
+		Price:       input.Price,
+		Description: input.Description,
+		Image:       input.Image,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &model.ProductResponse{
+		ID:          resultProduct.ID,
+		Name:        resultProduct.Name,
+		Price:       resultProduct.Price,
+		Description: resultProduct.Description,
+	}, nil
 	panic(fmt.Errorf("not implemented: CreateProduct - createProduct"))
 }
 
@@ -51,3 +67,12 @@ func (r *queryResolver) GetProducts(ctx context.Context) ([]*model.ProductRespon
 func (r *queryResolver) GetProduct(ctx context.Context, id string) (*model.ProductResponse, error) {
 	panic(fmt.Errorf("not implemented: GetProduct - getProduct"))
 }
+
+// Mutation returns MutationResolver implementation.
+func (r *Resolver) Mutation() MutationResolver { return &mutationResolver{r} }
+
+// Query returns QueryResolver implementation.
+func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
+
+type mutationResolver struct{ *Resolver }
+type queryResolver struct{ *Resolver }

@@ -34,6 +34,7 @@ func main() {
 		ProductSvc: productSvc,
 	}
 	srv := handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: &resolver}))
+	//e.Use(middleware.GraphQLMiddleware)
 	e.POST("/query", echo.WrapHandler(srv))
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer stop()

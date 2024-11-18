@@ -4,30 +4,32 @@ import (
 	"leaning-graphql/models"
 	"leaning-graphql/repository"
 	"log/slog"
+
+	"github.com/google/uuid"
 )
 
 type productsServices struct {
 	productRepo repository.ProductRepository
 }
 
+// CreateProductService implements ProductService.
+func (p productsServices) CreateProductService(product models.Product) (models.Product, error) {
+	ProductRepo:=models.Product{
+		ID:          uuid.New().String(),
+		Name:        product.Name,
+		Description: product.Description,
+		Price:       product.Price,
+		Image:       product.Image,
+	}
+	err:=p.productRepo.CreateProduct(ProductRepo)
+	if err != nil {
+		return models.Product{}, err
+	}
+	return ProductRepo, nil
+}
+
 // GetProductsService implements ProductService.
 func (p productsServices) GetProductsService() ([]models.Product, error) {
-	return []models.Product{
-		{
-			ID:          "1",
-			Name:        "Product 1",
-			Description: "Description 1",
-			Price:       100,
-			Image:       nil,
-		},
-		{
-			ID:          "2",
-			Name:        "Product 2",
-			Description: "Description 2",
-			Price:       200,
-			Image:       nil,
-		},
-	}, nil
 	products, err := p.productRepo.GetProducts()
 	if err != nil {
 		slog.Error("error get products", err.Error())

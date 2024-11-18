@@ -10,7 +10,7 @@ input ProductRequest {
     name: String!
     description: String!
     price: Float!
-    image: String
+    image: String!
 }
 extend type Query {
     getProducts: [ProductResponse!]
